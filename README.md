@@ -1,12 +1,13 @@
 # EMS
+
 Everyone needs to know :
--loop()
--setup()
+- loop()
+- setup()
 
 stuff needed to know for Buzzer:
--playMelody()
--checkAlarm()
--pitches.h 
+- playMelody()
+- checkAlarm()
+- pitches.h 
 
 stuff needed to know for 7-segment (aka TM1637)
 - displayTime()
