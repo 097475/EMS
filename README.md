@@ -1,5 +1,11 @@
 # EMS
 
+Important : what to upload
+- datasheets, hex, and source code folders
+- the PDF midterm file
+
+
+
 Everyone needs to know :
 - loop()
 - setup()
