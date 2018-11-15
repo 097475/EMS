@@ -59,8 +59,11 @@ void playMelody(){
   int noteDuration = 1000 / noteDurations[currentNote];  //length of the note
   tone(BUZZER, melody[currentNote], noteDuration);      // playing the note on the buzzer pin
   int pauseBetweenNotes = noteDuration * 1.30;         //calculating an adequate pause prior the next note
-  delay(pauseBetweenNotes);                           //executing the pause
+  int actualPause = pauseBetweenNotes - noteDuration;
+  delay(noteDuration);                           //executing the pause
   noTone(BUZZER);                                    //turning off the buzzer
+  digitalWrite(BUZZER, HIGH);
+  delay(actualPause);
   currentNote = (++currentNote) % MELODY_LENGTH;    //change index to the next note (the melody will replay using modulo math)
 
 }
@@ -90,7 +93,9 @@ void displayTime(){
   switch(state){
   // in IDLE state, we either show the current time or the alarm time, depending on the showAlarm flag
   // in current time view, the semicolon is blinking using the status variable
-      case IDLS:  if(showAlarm){
+      case IDLS:
+      case RING:
+                  if(showAlarm){
                      display.printTime(alarm_array[0],alarm_array[1],true);
                   }else{
                      display.printTime(now.hour(),now.minute(),status);
