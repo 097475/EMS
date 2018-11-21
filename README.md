@@ -24,7 +24,9 @@ Even more general tasks:
 
 
 for FMEA/FMECA, see: http://skl.it.p.lodz.pl/~ignaciuk/pliki/materialy/ES/documentation.html
+
 for sample report, see: http://skl.it.p.lodz.pl/~ignaciuk/pliki/materialy/ES/Report_1.pdf
+
 http://skl.it.p.lodz.pl/~ignaciuk/pliki/materialy/ES/es_lab.html
 
 
