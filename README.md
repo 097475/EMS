@@ -50,3 +50,4 @@ Specific tasks:
 - Further improvements and/or limitations
 
 https://manytools.org/hacker-tools/image-to-byte-array/
+https://forum.arduino.cc/index.php?topic=346356.0
