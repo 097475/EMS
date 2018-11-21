@@ -2,12 +2,12 @@
 
 Documentation general guidelines : 
 
-"Exactness, e.g. statements like "appropriate", "small/large", "optimal", etc. should be changed to indicate the actual values, parameter range, criterion, etc.
-Completeness, e.g. all project functions are described
-Verifiability, e.g. avoid expressions like "works better", "it is well adjusted", etc.
-Consistency, e.g. the same aspect should not be described in different way in various parts of documentation
-Modifiability, e.g. since programs "live", a good documentation should reflect correctly the program last version
-References, e.g. documentation must provide references or attachments to all the related documents (datasheets, RFC documents, legal acts, source codes and open libraries, and executable software"
+- Exactness, e.g. statements like "appropriate", "small/large", "optimal", etc. should be changed to indicate the actual values, parameter range, criterion, etc.
+- Completeness, e.g. all project functions are described
+- Verifiability, e.g. avoid expressions like "works better", "it is well adjusted", etc.
+- Consistency, e.g. the same aspect should not be described in different way in various parts of documentation
+- Modifiability, e.g. since programs "live", a good documentation should reflect correctly the program last version
+- References, e.g. documentation must provide references or attachments to all the related documents (datasheets, RFC documents, legal acts, source codes and open libraries, and executable software"
 
 
 Even more general tasks:
