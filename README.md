@@ -49,4 +49,4 @@ Specific tasks:
 - FMEA
 - Further improvements and/or limitations
 
-
+https://manytools.org/hacker-tools/image-to-byte-array/
