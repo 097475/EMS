@@ -1,3 +1,12 @@
+
+/////////////////////////////
+#include <LedControl.h>
+#include <DHT.h>
+#define MATRIXLEN 8
+#define ANIMLEN 4
+////////////////////////////
+
+
 #include <SevenSegmentExtended.h> //the library with functions that print the time
 #include <SevenSegmentTM1637.h> 
 
@@ -36,12 +45,43 @@ unsigned char state = IDLS; //current state, here idle is default
 byte noblink = 0;  //when 0 is blinking, when 1 - stop blinking for a second
 byte blinktimer = 0; // time since the blinking was stopped
 
-
+//////////////////////////
+LedControl lc=LedControl(8,10,9,1);
+DHT dht(11,DHT11);
+byte animations[][4][8] ={
+  {{0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0},{0x0, 0x0, 0x0, 0x0, 0x0, 0x18, 0x24, 0x0},{0x0, 0x0, 0x0, 0x3c, 0x42, 0x18, 0x24, 0x0},{0x0, 0x7e, 0x81, 0x3c, 0x42, 0x18, 0x24, 0x0}},
+  {{0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0},{0x0, 0x0, 0x0, 0x0, 0x0, 0x18, 0x24, 0x0},{0x0, 0x0, 0x0, 0x3c, 0x42, 0x18, 0x24, 0x0},{0x0, 0x7e, 0x81, 0x3c, 0x42, 0x18, 0x24, 0x0}},
+  {{0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0},{0x0, 0x0, 0x0, 0x0, 0x0, 0x18, 0x24, 0x0},{0x0, 0x0, 0x0, 0x3c, 0x42, 0x18, 0x24, 0x0},{0x0, 0x7e, 0x81, 0x3c, 0x42, 0x18, 0x24, 0x0}},
+  {{0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0},{0x0, 0x0, 0x0, 0x0, 0x0, 0x18, 0x24, 0x0},{0x0, 0x0, 0x0, 0x3c, 0x42, 0x18, 0x24, 0x0},{0x0, 0x7e, 0x81, 0x3c, 0x42, 0x18, 0x24, 0x0}},
+  {{0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0},{0x0, 0x0, 0x0, 0x0, 0x0, 0x18, 0x24, 0x0},{0x0, 0x0, 0x0, 0x3c, 0x42, 0x18, 0x24, 0x0},{0x0, 0x7e, 0x81, 0x3c, 0x42, 0x18, 0x24, 0x0}}
+};
+#define IDLSANIM 0
+///////////////////////////
 
 SevenSegmentExtended    display(CLK, DIO);  //used in ISR, the display object
 RTC_DS1307 RTC;  //used in loop and setup, the RTC clock object
 DateTime now;  // read in ISR, the date object
 
+void writeByteArray(byte *src)
+{
+  for(int i = 0; i < MATRIXLEN; i++) //MATRXILEN
+  {
+    lc.setRow(0,i,src[i]);
+  }
+}
+
+void animate(byte (*src)[8])
+{
+  static byte curr = 0;
+  static long last = -500;
+  if(last + 500 < millis())
+  {
+    writeByteArray(src[curr]);
+    last = millis();
+    curr = (++curr)%ANIMLEN;
+  }
+
+}
 //here we put the melody that will be played when the alarm is on
 void playMelody(){
   
@@ -57,9 +97,13 @@ void playMelody(){
 
   static byte currentNote = 0;                            //note to be played in the current call
   int noteDuration = 1000 / noteDurations[currentNote];  //length of the note
-  tone(BUZZER, melody[currentNote], noteDuration);      // playing the note on the buzzer pin
   int pauseBetweenNotes = noteDuration * 1.30;         //calculating an adequate pause prior the next note
   int actualPause = pauseBetweenNotes - noteDuration;
+  int curr = melody[currentNote];
+  if(curr != PAUSE)
+  {
+     tone(BUZZER, melody[currentNote], noteDuration);      // playing the note on the buzzer pin
+  }
   delay(noteDuration);                           //executing the pause
   noTone(BUZZER);                                    //turning off the buzzer
   digitalWrite(BUZZER, HIGH);
@@ -145,7 +189,7 @@ void displayTime(){
 //this button is tasked to execute state transitions
 void BRHandler(byte reading)
 {
-  static int startpressed = 0,endpressed = 0;  //timers to count how long it has been pressed
+  static long startpressed = 0,endpressed = 0;  //timers to count how long it has been pressed
   
     if( reading == HIGH){  
        startpressed = millis();      //button has been pressed; we record the time with millis()
@@ -218,6 +262,7 @@ void setup() {
   pinMode(2,INPUT_PULLUP);             //set pins as input, with PULLUP resistor if necessary
   pinMode(3,INPUT);
   pinMode(6,INPUT_PULLUP);
+  pinMode(BUZZER, INPUT);
   display.begin();                     // initializes the display
   display.setBacklight(100);           // set the brightness to 100 %
   Timer1.initialize(500000);           //set the timer1 period to 500.000 microseconds
@@ -225,8 +270,17 @@ void setup() {
   Wire.begin();                        // initialize the i2c library
   RTC.begin();                         // start the clock
   RTC.adjust(DateTime(__DATE__, __TIME__)); //initialize the clock with the compilation date and time
+  //RTC.adjust(DateTime(0,0,0,0,0,0));
   attachInterrupt(digitalPinToInterrupt(2),BLHandler,CHANGE); //attach interrupt on digital PIN 2, use BLHandler as interrupt service routine, trigger the interrupt on every state change
   BLHandler();                          //read initial status of the DPDT button, to record if the alarm is already on
+  /////////////////////////////////////////
+      //wake up the MAX72XX from power-saving mode
+    lc.shutdown(0,false); 
+    //set a medium brightness for the Leds
+    lc.setIntensity(0,0); 
+    dht.begin();
+    Serial.begin(9600);
+  //////////////////////////////////////////////
 }
 
 //checks whether to start blinking digits again
@@ -256,4 +310,16 @@ void loop() {
   now = RTC.now(); //record the current time from the clock
   checkAlarm();   //check if it's time to play the alarm
   checkBlinkTimer(); //check if it's time to start blinking something again
+  ///////////////////////////////////
+  //byte a[][8]={{0x3c, 0x42, 0x91, 0x91, 0x9d, 0x81, 0x42, 0x3c},{0x3c, 0x42, 0x81, 0x81, 0x81, 0x81, 0x42, 0x3c}};
+  animate(animations[IDLSANIM]);
+  //float temp = dht.readTemperature(); this is slow
+  //float hum = dht.readHumidity(); this is slow
+  /*
+  Serial.print(temp);
+  Serial.print("\t");
+  Serial.print(hum);
+  Serial.print("\t");
+  Serial.println(dht.computeHeatIndex(temp,hum,false));*/
+  ////////////////////////////////////////////////////
 }
