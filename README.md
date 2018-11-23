@@ -34,6 +34,7 @@ Specific tasks:
 - Introduction
 - Who did what
 - User guide
+- Arduino description
 - Description of each component and each interface (e.g RTC and I2C, matrix and SPI, etc.) + interrupts
   - Buttons + how does arduino reads buttons, debouncing, etc.
   - Led display + pseudo i2c
@@ -44,6 +45,7 @@ Specific tasks:
   - joystick + its protocol (???)
   - light sensor + its protocol
   - Interrupts (timed and non-timed)
+  - Buzzer desc + potentiometer
 - Description of the Finite State Machine
 - Description of the complete algorithm (with subsections of course)
 - FMEA
