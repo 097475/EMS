@@ -31,25 +31,25 @@ http://skl.it.p.lodz.pl/~ignaciuk/pliki/materialy/ES/es_lab.html
 
 
 Specific tasks:
-- Introduction
-- Who did what
-- User guide
-- Arduino description
+- Introduction (Ewa)
+- Who did what (Ewa)
+- User guide (Ewa)
+- Arduino description (to be reviewed)
 - Description of each component and each interface (e.g RTC and I2C, matrix and SPI, etc.) + interrupts
-  - Buttons + how does arduino reads buttons, debouncing, etc.
-  - Led display + pseudo i2c
-  - RTC + i2c
-  - led matrix (max7219) + spi
-  - DHT + Single Wire Two Way protocol
-  - nokia display + its protocol (??)
-  - joystick + its protocol (???)
-  - light sensor + its protocol
-  - Interrupts (timed and non-timed)
-  - Buzzer desc + potentiometer
-- Description of the Finite State Machine
-- Description of the complete algorithm (with subsections of course)
-- FMEA
-- Further improvements and/or limitations
+  - Buttons + how does arduino reads buttons, debouncing, etc. (Emilio)
+  - Led display + pseudo i2c (Emilio)
+  - RTC + i2c (Emilio)
+  - led matrix (max7219) + spi (taken)
+  - DHT + Single Wire Two Way protocol (taken + next week!)
+  - nokia display + its protocol (??) (next week!)
+  - joystick + its protocol (???) (next week!)
+  - light sensor + its protocol (taken)
+  - Interrupts (timed and non-timed) (taken)
+  - Buzzer desc + potentiometer (Emilio)
+- Description of the Finite State Machine (taken)
+- Description of the complete algorithm (with subsections of course) (next week!)
+- FMEA (taken)
+- Further improvements and/or limitations (taken)
 
 https://manytools.org/hacker-tools/image-to-byte-array/
 https://forum.arduino.cc/index.php?topic=346356.0
