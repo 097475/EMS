@@ -40,7 +40,7 @@ Specific tasks:
   - Led display + pseudo i2c (Emilio)
   - RTC + i2c (Emilio)
   - led matrix (max7219) + spi (taken)
-  - DHT + Single Wire Two Way protocol (taken + next week!)
+  - DHT + Single Wire Two Way protocol (partially taken)
   - nokia display + its protocol (??) (next week!)
   - joystick + its protocol (???) (next week!)
   - light sensor + its protocol (taken)
@@ -48,8 +48,8 @@ Specific tasks:
   - Buzzer desc + potentiometer (Emilio)
 - Description of the Finite State Machine (taken)
 - Description of the complete algorithm (with subsections of course) (next week!)
-- FMEA (taken)
+- FMEA (partially taken)
 - Further improvements and/or limitations (taken)
-
+- screenshots (next week!)
 https://manytools.org/hacker-tools/image-to-byte-array/
 https://forum.arduino.cc/index.php?topic=346356.0
