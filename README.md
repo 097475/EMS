@@ -49,7 +49,7 @@ Specific tasks:
 - Description of the Finite State Machine (taken)
 - Description of the complete algorithm (with subsections of course) (next week!)
 - FMEA (partially taken)
-- Further improvements and/or limitations (taken)
+- Further improvements and/or limitations (partially taken)
 - screenshots (next week!)
 https://manytools.org/hacker-tools/image-to-byte-array/
 https://forum.arduino.cc/index.php?topic=346356.0
