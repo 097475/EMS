@@ -46,7 +46,7 @@ Specific tasks:
   - light sensor + its protocol (taken)
   - Interrupts (timed and non-timed) (taken)
   - Buzzer desc + potentiometer (Emilio)
-- Description of the Finite State Machine (taken)
+- Description of the Finite State Machine (Emilio)
 - Description of the complete algorithm (with subsections of course) (next week!)
 - FMEA (partially taken)
 - Further improvements and/or limitations (partially taken)
