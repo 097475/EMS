@@ -744,7 +744,9 @@
  &nbsp;&nbsp;&nbsp;<font color="#000000">}</font>
  &nbsp;<font color="#000000">}</font>
  &nbsp;<font color="#5e6d03">if</font> <font color="#000000">(</font><font color="#000000">screenUpdated</font> <font color="#434f54">==</font> <font color="#00979c">false</font> <font color="#434f54">&amp;&amp;</font> <font color="#d35400">second</font> <font color="#434f54">==</font> <font color="#000000">0</font><font color="#000000">)</font><font color="#000000">{</font>
- &nbsp;&nbsp;&nbsp;<font color="#000000">displayDate</font><font color="#000000">(</font><font color="#000000">)</font><font color="#000000">;</font>
+ &nbsp;&nbsp;&nbsp;<font color="#5e6d03">if</font><font color="#000000">(</font><font color="#d35400">now</font><font color="#434f54">.</font><font color="#d35400">hour</font><font color="#000000">(</font><font color="#000000">)</font> <font color="#434f54">==</font> <font color="#000000">0</font> <font color="#434f54">&amp;&amp;</font> <font color="#d35400">now</font><font color="#434f54">.</font><font color="#d35400">minute</font><font color="#000000">(</font><font color="#000000">)</font> <font color="#434f54">==</font> <font color="#000000">0</font><font color="#000000">)</font><font color="#000000">{</font>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000">displayDate</font><font color="#000000">(</font><font color="#000000">)</font><font color="#000000">;</font>
+ &nbsp;&nbsp;&nbsp;<font color="#000000">}</font>
  &nbsp;&nbsp;&nbsp;<font color="#000000">readDHT</font><font color="#000000">(</font><font color="#000000">)</font><font color="#000000">;</font>
  &nbsp;&nbsp;&nbsp;<font color="#000000">screenUpdated</font> <font color="#434f54">=</font> <font color="#00979c">true</font><font color="#000000">;</font>
  &nbsp;<font color="#000000">}</font>
