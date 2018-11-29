@@ -181,7 +181,7 @@ void BLHandler() {
 //function that sets the time on the RTC; notice that for now the date isn't set, and that the second is always 0
 void adjustClock() {
   //DateTime (uint16_t year, uint8_t month, uint8_t day,uint8_t hour =0, uint8_t min =0, uint8_t sec =0);
-  RTC.adjust(DateTime(dateArray[0] + 2000, dateArray[1], dateArray[2], timeArray[0], timeArray[1], 0));
+  RTC.adjust(DateTime(dateArray[0] + 2000, dateArray[1], dateArray[2], timeArray[0], timeArray[1], 1));
 }
 
 //interrupt service routine on Timer1 - executed every 0.5s
@@ -743,7 +743,9 @@ void loop() {
     }
   }
   if (screenUpdated == false && second == 0){
-    displayDate();
+    if(now.hour() == 0 && now.minute() == 0){
+       displayDate();
+    }
     readDHT();
     screenUpdated = true;
   }
