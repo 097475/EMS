@@ -80,6 +80,7 @@ boolean noBlink = false;  //when false is blinking, when true - stop blinking fo
 unsigned long blinkTimer = 0; // time since the blinking was stopped
 byte currentNote = 0;//note to be played in the current call
 byte rep = REPS; // number of animation repetitions elapsed, when equal to REPS no animation is played
+byte currImage = 0;
 byte currentAnimation = IDLSANIM;
 //animations
 const byte animations[][4][8] = {
@@ -116,15 +117,15 @@ void writeByteArray(byte *src){
 //starts the animations by setting the elapsed repetitions to 0 - the animation is repeated till REPS
 void startAnimation(){
   rep = 0;
+  currImage = 0;
   lc.shutdown(0,false);
 }
 
 // runs the next image in the animation
 void animate(byte (*src)[8]){
-  static byte curr = 0;
-  writeByteArray(src[curr]);
-  curr = (++curr) % ANIMLEN;
-  if (curr == 0){
+  writeByteArray(src[currImage]);
+  currImage = (++currImage) % ANIMLEN;
+  if (currImage == 0){
     rep++;
   }
 }
@@ -296,9 +297,6 @@ void BBHandler(byte reading, char direction){
     case EMTH: toEdit = &dateArray[1]; mod = 12; fromOne = 1; break;
     case EDAY: toEdit = &dateArray[2]; mod = 31; fromOne = 1; break;//additional checks
   }
-  if (direction == -1 && *toEdit == 0){
-    *toEdit = mod;
-  }
   if (state == EDAY) {
     switch (dateArray[1]) {
       case 2: !((dateArray[0] + 2000) % 4) && !(!((dateArray[0] + 2000) % 100) && ((dateArray[0] + 2000) % 400)) ?  mod = 29 : mod = 28; break;
@@ -308,6 +306,11 @@ void BBHandler(byte reading, char direction){
       case 11: mod = 30; break;
       default: break;
     }
+  }
+  if (direction == -1 && *toEdit == 0){
+    *toEdit = mod;
+  }else if(fromOne && direction == -1 && *toEdit == 1){
+    *toEdit = mod+1;
   }
 
   *toEdit = (((*toEdit) + direction - fromOne) % mod) + fromOne ; //increase the value referenced by the pointer and apply the modulo
@@ -686,7 +689,6 @@ void setup() {
   pinMode(BB1, INPUT_PULLUP);            //set pins as input, with PULLUP resistor if necessary
   pinMode(BL, INPUT_PULLUP);
   pinMode(BB2, INPUT_PULLUP);
-  pinMode(BR, INPUT);
   display.begin();                     // initializes the display
   display.setBacklight(100);           // set the brightness to 100 %
   Timer1.initialize(500000);           //set the timer1 period to 500.000 microseconds
@@ -698,9 +700,9 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(2), BLHandler, CHANGE); //attach interrupt on digital PIN 2, use BLHandler as interrupt service routine, trigger the interrupt on every state change
   BLHandler();                          //read initial status of the DPDT button, to record if the alarm is already on
   nokiaDisplay.begin();
-  nokiaDisplay.clearDisplay();
   nokiaDisplay.setContrast(30);
   nokiaDisplay.setTextColor(0xFFFF, 0x0000);
+  nokiaDisplay.clearDisplay();
   nokiaDisplay.display();
   displayDate();
   readDHT();
