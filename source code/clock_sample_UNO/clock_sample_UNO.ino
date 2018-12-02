@@ -105,7 +105,7 @@ byte numberDots = 3; //how many dots there gonna be
 unsigned long timeChecker; //timer
 bool comeBackToZero = true; //after every good answer you have to come back to 0 position
 bool winTheGame  = false; // global
-byte arrows[HOWMANY];
+byte arrows[HOWMANY]; // generaly arrows are representet by numbers 0 up 1 down 2 left 3 right
 
 // prints an 8bit image on the LED matrix
 void writeByteArray(byte *src){
@@ -345,36 +345,36 @@ void pollButtons() {
 }
 
 
-void giveValues() {
+void giveValues() { //besically we create random numbers (0 1 2 3) that gonna be representet by arrows
   for (int i = 0 ; i < HOWMANY; i++){
     arrows[i] = random(0, 4); // four signs <- -> ^ .
   }
 }
 
 
-void drawSequence(int y) {
+void drawSequence(int y) { //to display 4 generater arrows on the screen
   int x = 12;
   for (int i = 0; i < HOWMANY; i++) {
     if (arrows[i] == 0)
-      drawArrow(x, y, 0, 4, 0);
+      drawArrow(x, y, 0, 4, 0); //drow arrow 0 means up 4 is a size and 0 means arrow is black
     if (arrows[i] == 1)
-      drawArrow(x, y, 1, 4, 0);
+      drawArrow(x, y, 1, 4, 0); //drow arrow 1 means down 4 is a size and 0 means arrow is black
     if (arrows[i] == 2)
-      drawArrow(x, y, 2, 4, 0);
+      drawArrow(x, y, 2, 4, 0); //drow arrow 2 means left 4 is a size and 0 means arrow is black
     if (arrows[i] == 3)
-      drawArrow(x, y, 3, 4, 0);
-    x += 15;
+      drawArrow(x, y, 3, 4, 0); //drow arrow 3 means roght 4 is a size and 0 means arrow is black
+    x += 15; // width and legth of the arrow is 9 so we bassicaly making some gap beetwen them
   }
 }
 
-void clearArrow() {
+void clearArrow() { // clear arrow that is currently proccessed
   drawArrow(12 + 15 * currentArrow, 20, arrows[currentArrow] , 4, 1);
 }
-void redrawArrow() {
+void redrawArrow() { //if user fails to make good move in proper time draw again arrow 
   drawArrow(12 + 15 * currentArrow, 20, arrows[currentArrow] , 4, 0);
 }
 
-void drawArrow(int x, int y, int direction_, int size_, int color_) {
+void drawArrow(int x, int y, int direction_, int size_, int color_) { // function responsible for drowing arrows on the screen
   byte color = 1;
   if (color_ == 0)
     color = 0xFFFF; //BLACK
@@ -408,20 +408,20 @@ void drawArrow(int x, int y, int direction_, int size_, int color_) {
 
 
 
-void dotsDisplay(int numberDots) { //check this function
-  for (int i = 0; i < numberDots; i++) {
+void dotsDisplay(int numberDots) { //its responsible for drowing dots
+  for (int i = 0; i < numberDots; i++) { //drows dots that left in "black"
     nokiaDisplay.drawRect(53 + 12 * i , 41, 3, 3, 0xFFF);
     nokiaDisplay.fillRect(53 + 12 * i , 41, 3, 3, 0xFFF);
   }
-  for (int i = numberDots; i < 3; i++) {
+  for (int i = numberDots; i < 3; i++) { //rest of the dors make "white"
     nokiaDisplay.drawRect(53 + 12 * i , 41, 3, 3, 0x0000);
     nokiaDisplay.fillRect(53 + 12 * i , 41, 3, 3, 0x0000);
   }
   nokiaDisplay.display();
 }
 
-void changeNumberDots() {
-  if (currentArrow > 0){
+void changeNumberDots() { // if dots number gonna be less or equal zero change current arrow and come back one step not 
+  if (currentArrow > 0){ // disactive in case of first arrow becouse we can move anywhere
     if (numberDots <= 0) {
       currentArrow--;
       getCurrentArrow();
@@ -434,7 +434,7 @@ void changeNumberDots() {
 }
 
 
-bool checkWin() {
+bool checkWin() { // check if winning conditions are held
   if (currentArrow > 3 && winTheGame == false) {
     dotsDisplay(0);
     nokiaDisplay.clearDisplay();
@@ -447,17 +447,17 @@ bool checkWin() {
 }
 
 
-void changeOX() {
-  if (arrows[currentArrow] == 2) {
-    if (analogRead(OX) < 24) {
-      timeChecker = millis();
-      numberDots = 3;
-      dotsDisplay(numberDots);
-      clearArrow();
-      currentArrow++;
-      if (currentArrow < 4)
-        getCurrentArrow();
-      comeBackToZero = false;
+void changeOX() { // check if there was a proper movement by joystick
+  if (arrows[currentArrow] == 2) { // if currnet arrow is up and you make proper movement
+    if (analogRead(OX) < 24) { //we dont have zero becouse someone can no ideally go to zero postition so it's error margin
+      timeChecker = millis(); // we restart time after which first dot disapper
+      numberDots = 3; // we restart number of dots player once again has three
+      dotsDisplay(numberDots); // we display 3 dots
+      clearArrow(); //we blank the arrow becouse we make coorect movement
+      currentArrow++; // we go to the next arrow
+      if (currentArrow < 4) // if there are any arrow left
+        getCurrentArrow(); //display the proper text on the screen so for example "left"
+      comeBackToZero = false; //so bassically you have to go to zero position to have chance to ansewr to another arrow
     }
   }
   if (arrows[currentArrow] == 3) {
@@ -501,19 +501,19 @@ void changeOY() {
   }
 }
 
-void zeroState() {
+void zeroState() { //so if user is in more less zero position in error margin we set flag to true and he can make onther move 
   if (analogRead(OX) < 600 && analogRead(OX) > 400 && analogRead(OY) < 600 && analogRead(OY) > 400) {
     comeBackToZero = true;
   }
 }
 
-void prepareText(int x_, int y_, int end_x, int end_y) {
+void prepareText(int x_, int y_, int end_x, int end_y) { // becouse text is white we need to have black space behinf them
   nokiaDisplay.drawRect(x_, y_, end_x - x_, end_y - y_, 1);
   nokiaDisplay.fillRect(x_, y_, end_x - x_,  end_y - y_, 1);
 }
 
 
-void getCurrentArrow() {
+void getCurrentArrow() { // print current arrow for instance "left" and so n
   if ( arrows[currentArrow] == 0) {
     printText(" UP   ", 2, 40, 1);
   }
@@ -529,13 +529,13 @@ void getCurrentArrow() {
 }
 
 
-void drawAPixel(int x, int y) {
+void drawAPixel(int x, int y) { //draw one black pixel
   nokiaDisplay.drawPixel(x, y, BLACK);
 }
 
 
 
-void printArena() {
+void printArena() { //we just display the frame for the game
   for (int temp_y = 10; temp_y < 48; temp_y += 37) {
     for (int temp_x = 0; temp_x < 84; temp_x++)
     {
@@ -560,14 +560,14 @@ void printArena() {
 }
 
 
-void printText(String text, int x, int y, int color) {
+void printText(String text, int x, int y, int color) { // we print the text 
   if (color == 0)
     color = 0xFFFF; //BLACK
   else
     color = 0x0000; //WHITE
   const unsigned int len = text.length();
   char table_text[len];
-  text.toCharArray(table_text, text.length());
+  text.toCharArray(table_text, text.length()); // this dislay only display char
   for (int i = 0; i < text.length(); i++) {
     nokiaDisplay.drawChar(x + 6 * i , y, table_text[i], color, 1, 1);
   }
@@ -585,27 +585,27 @@ void initGame(){
   prepareText(0, 0, 83, 9); // make black under text
   printText(" make seq ", 2, 2, 1); //print text
   prepareText(0, 38, 50, 47); // this is black box on the bottom
-  getCurrentArrow();
-  timeChecker = millis();
-  dotsDisplay(numberDots);
+  getCurrentArrow(); // print message about direction of the arrow
+  timeChecker = millis(); // time checker for dots if this is time for disapper
+  dotsDisplay(numberDots); // display 3 dots
 }
 
 void runGame()
 {
   if (winTheGame == false) {
-    if (comeBackToZero == true) {
+    if (comeBackToZero == true) { //if there is zero state we can answer
       changeOX();
       changeOY();
     }
-    zeroState();
-    changeNumberDots();
+    zeroState();//check if zero state
+    changeNumberDots(); 
     if (!checkWin()) {
-      if (millis() - timeChecker > TIMEFORGOODANSWER) {
-        if (numberDots > 0 && currentArrow > 0){
-          numberDots--;
+      if (millis() - timeChecker > TIMEFORGOODANSWER) { //if time left dot dissaper
+        if (numberDots > 0 && currentArrow > 0){ //for first arrow nothing happens to the dots
+          numberDots--; 
           dotsDisplay(numberDots);
         }
-        timeChecker = millis();
+        timeChecker = millis(); //we reset the timer
       }
     }
   }
