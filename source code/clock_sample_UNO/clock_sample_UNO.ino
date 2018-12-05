@@ -136,7 +136,7 @@ void playMelody() {
   static bool isPlaying = false, isWaiting = false;
   int noteDuration,pauseBetweenNotes,actualPause,curr;
   
-   if (!isPlaying){
+   if (!isPlaying){ //running a new note
         noteDuration = 1000 / noteDurations[currentNote];  //length of the note
         pauseBetweenNotes = noteDuration * 1.30;         //calculating an adequate pause prior the next note
         actualPause = pauseBetweenNotes - noteDuration;
@@ -147,18 +147,18 @@ void playMelody() {
     isPlaying = true;
   }
   
-  if (notePause + noteDuration > millis())
+  if (notePause + noteDuration > millis()) //waiting for the note to finish
       return; 
         
-  noTone(BUZZER);                                    
+  noTone(BUZZER); //shutting off the buzzer                                    
   digitalWrite(BUZZER, HIGH);
   
-  if (!isWaiting) {
+  if (!isWaiting) { //after the note is finished, we wait a pause
     betweenPause = millis();
     isWaiting = true;
   }
   
-  if (betweenPause + actualPause > millis())
+  if (betweenPause + actualPause > millis()) //waiting the minimum pause between two notes
       return;
 
 
@@ -265,10 +265,10 @@ void BRHandler(byte reading){
       switch (state) {
         case IDLS:  state = EAHR; currentAnimation = ETANIM; break;
         case EHRS:  state = EMIN; currentAnimation = ETANIM; break;
-        case EMIN:  state = EYRS; currentAnimation = EYRANIM;break; //here we also write the edited time in timeArray to the RTC clock
+        case EMIN:  state = EYRS; currentAnimation = EYRANIM;break; 
         case EYRS:  state = EMTH; currentAnimation = EMTHANIM;break;
         case EMTH:  state = EDAY; currentAnimation = EDAYANIM;break;
-        case EDAY:  adjustClock(); state = IDLS; currentAnimation = IDLSANIM; break;
+        case EDAY:  adjustClock(); state = IDLS; currentAnimation = IDLSANIM; break; //here we also write the edited time in timeArray to the RTC clock
         case EAHR:  state = EAMI; currentAnimation = ETANIM; break;
         case EAMI:  state = IDLS;  currentAnimation = IDLSANIM; break;
         case RING: return; //RING has no associated transitions
@@ -297,6 +297,7 @@ void BBHandler(byte reading, char direction){
     case EMTH: toEdit = &dateArray[1]; mod = 12; fromOne = 1; break;
     case EDAY: toEdit = &dateArray[2]; mod = 31; fromOne = 1; break;//additional checks
   }
+  //correct month handling
   if (state == EDAY) {
     switch (dateArray[1]) {
       case 2: !((dateArray[0] + 2000) % 4) && !(!((dateArray[0] + 2000) % 100) && ((dateArray[0] + 2000) % 400)) ?  mod = 29 : mod = 28; break;
@@ -307,6 +308,7 @@ void BBHandler(byte reading, char direction){
       default: break;
     }
   }
+  // to make modulo math consistent backwards
   if (direction == -1 && *toEdit == 0){
     *toEdit = mod;
   }else if(fromOne && direction == -1 && *toEdit == 1){
@@ -620,24 +622,24 @@ void checkAlarm() {
   // if the armed flag is enabled, the state is IDLS ( if you are editing, or it is already RING state, it will not change state to RING), and the current hour and minute matches the
   // values in the alarm array, the state transitions into RING
   if (armed && state == IDLS && (now.hour() == alarmArray[0] && now.minute() == alarmArray[1])) {
-    state = RING;
-    currentNote = 0;
-    currentAnimation = RINGANIM;
+    state = RING; //state transition
+    currentNote = 0; //start melody from first note
+    currentAnimation = RINGANIM; //run animation
     startAnimation();
-    initGame();
+    initGame(); //initialize the game
   } else if (!armed && winTheGame && state == RING) { //if the armed flag is disable, but the state is RING (i.e. we are making noise) we turn off the noise
     noTone(BUZZER);                  //stop the tone on the buzzer
     digitalWrite(BUZZER, HIGH);     //the passive buzzer is active LOW, so we also need to write HIGH
     state = IDLS;                  //transition into IDLS once again
-    nokiaDisplay.clearDisplay();
-    displayDate();
+    nokiaDisplay.clearDisplay();   //clean the display
+    displayDate();                //put the typical display values
     readDHT();
     nokiaDisplay.display();
   }
   // if the state is RING, play sound (one note)
   if (state == RING) {
-    playMelody();
-    runGame();
+    playMelody(); //run melody
+    runGame();    // run game
   }
 }
 void displayDate()
@@ -696,19 +698,19 @@ void setup() {
   Wire.begin();                        // initialize the i2c library
   RTC.begin();                         // start the clock
   RTC.adjust(DateTime(__DATE__, __TIME__)); //initialize the clock with the compilation date and time
-  now = RTC.now();
+  now = RTC.now();                      //get initial clock values
   attachInterrupt(digitalPinToInterrupt(2), BLHandler, CHANGE); //attach interrupt on digital PIN 2, use BLHandler as interrupt service routine, trigger the interrupt on every state change
   BLHandler();                          //read initial status of the DPDT button, to record if the alarm is already on
-  nokiaDisplay.begin();
+  nokiaDisplay.begin();                 //initialize nokia display
   nokiaDisplay.setContrast(30);
   nokiaDisplay.setTextColor(0xFFFF, 0x0000);
   nokiaDisplay.clearDisplay();
   nokiaDisplay.display();
-  displayDate();
+  displayDate();  
   readDHT();
-  Entropy.initialize();
+  Entropy.initialize(); //initialize random number generator
   randomSeed( Entropy.random());
-  delay(2000);
+  delay(2000); //run a short delay
   startAnimation();
 }
 
@@ -717,12 +719,13 @@ void loop() {
   static long secondPeriod = 0;
   static bool screenUpdated = false;
   now = RTC.now(); //record the current time from the clock
-  byte second = now.second();
-  long curr = millis();
+  byte second = now.second(); //read current second
+  long curr = millis(); //read current millisecond
   
   pollButtons();  //polls the buttons
   checkAlarm();   //check if it's time to play the alarm
-    
+  
+  // animation handler
   if (sequenceDelay + 500 < curr){
     if( rep < REPS){
       animate(animations[currentAnimation]);
@@ -732,9 +735,11 @@ void loop() {
       lc.shutdown(0,true);
     }
   }
+  // blinking handler
   if (blinkTimer + 1000 < curr){
     noBlink = 0;
   }
+  //photoresistor handler, also resets screenUpdated flag
   if (secondPeriod + 1000 < curr){
     short phread = analogRead(PHOTORES);
     lc.setIntensity(0, map(phread, 0, 1023, 0, 15)); //0 - 15
@@ -744,6 +749,7 @@ void loop() {
       screenUpdated = false;
     }
   }
+  //nokia display refresh
   if (screenUpdated == false && second == 0){
     if(now.hour() == 0 && now.minute() == 0){
        displayDate();
